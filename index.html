@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Dimensionamento de Quadro de Colaboradores das Lojas — Plurix. Modelo Oficial da Aba CAIXA." />
+  <title>Plurix · Dimensionamento de Quadro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="css/style.css?v=2.2" />
+</head>
+<body>
+
+  <!-- ─── Header Corporativo Superior (Estilo Microsoft / Power BI) ─── -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Recolher ou expandir painel de investidas" aria-label="Alternar barra lateral">
+        <span>☰</span>
+      </button>
+      <div class="header-logo">
+        <div class="logo-badge">PLX</div>
+        <div class="header-title-group">
+          <h1>Dimensionamento de Quadro · Lojas</h1>
+          <p>Painel Executivo de Gestão Operacional &bull; Varejo Alimentar Plurix</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <span class="badge-corp badge-investida" id="header-status-badge">🟢 Base Oficial OneDrive</span>
+      <button class="btn-corp btn-corp-outline btn-theme-toggle" id="btn-toggle-theme" title="Alternar entre Tema Claro (Boa Supermercados) e Tema Escuro">
+        <span id="theme-toggle-icon">🌙</span> <span id="theme-toggle-text">Modo Escuro</span>
+      </button>
+      <button class="btn-corp btn-corp-outline" id="btn-upload-excel" title="Fazer upload de nova versão da planilha Excel">
+        📤 Atualizar Base (Excel)
+      </button>
+      <button class="btn-corp btn-corp-outline" id="btn-exportar-csv" title="Exportar dados da visão atual em formato CSV">
+        📥 Exportar Excel (CSV)
+      </button>
+      <input type="file" id="input-file-excel" accept=".xlsx" style="display:none;" />
+    </div>
+  </header>
+
+  <!-- ─── Barra de Navegação por Módulos Executivos ─────────────────── -->
+  <nav class="nav-subbar" aria-label="Navegação entre visões">
+    <button class="tab-btn active" data-tab="operacional" id="tab-nav-operacional">
+      <span>📊 Tela Principal (Operacional)</span>
+      <span class="tab-badge" id="tab-badge-hierarquia">Foco Gestão &bull; 12 Colunas</span>
+    </button>
+    <button class="tab-btn" data-tab="auditoria" id="tab-nav-auditoria">
+      <span>🏬 Auditoria da Loja Inteira</span>
+      <span class="tab-badge" style="background:#10b981; color:#fff;">DIN HC &amp; VOL</span>
+    </button>
+    <button class="tab-btn" data-tab="metodologia" id="tab-nav-metodologia">
+      <span>📐 Memória de Cálculo &amp; Metodologia</span>
+      <span class="tab-badge">Auditoria Técnica</span>
+    </button>
+  </nav>
+
+  <!-- ─── Layout Executivo: Sidebar Lateral de Investidas + Viewport Principal ─── -->
+  <div class="executive-layout-wrapper">
+    <aside class="sidebar-investidas" id="sidebar-investidas" aria-label="Seleção de Investidas">
+      <!-- Preenchido dinamicamente com cards de investidas pelo app.js -->
+    </aside>
+
+    <main class="main-container" id="app-viewport" role="main">
+      <!-- Conteúdo dinâmico renderizado pelo app.js -->
+    </main>
+  </div>
+
+  <!-- ─── Modal Executivo de Detalhes e Memória da Loja ─────────────── -->
+  <div class="modal-overlay" id="modal-store-detail" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-store-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h2 id="modal-store-title">Detalhe da Loja</h2>
+          <p id="modal-store-subtitle">Informações consolidadas e memória de cálculo</p>
+        </div>
+        <button class="modal-close-btn" id="modal-store-close" aria-label="Fechar">&times;</button>
+      </div>
+
+      <div class="modal-body" id="modal-store-body">
+        <!-- Preenchido dinamicamente com informações transparentes do Excel -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-corp btn-corp-outline" id="modal-store-close-btn">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Modal de Upload e Processamento de Excel ────────────────────── -->
+  <div class="modal-overlay" id="modal-upload" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="modal-upload-title">
+    <div class="modal-dialog" style="max-width:600px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h2 id="modal-upload-title">Processamento da Base Excel</h2>
+          <p id="modal-upload-subtitle">Extração em tempo real das 148 lojas e múltiplos setores</p>
+        </div>
+        <button class="modal-close-btn" id="modal-upload-close" aria-label="Fechar">&times;</button>
+      </div>
+
+      <div class="modal-body" id="modal-upload-body">
+        <div id="upload-status-text" style="font-size:14px; font-weight:600; color:#fff; margin-bottom:12px;">Enviando arquivo...</div>
+        <div style="background:var(--bg-app); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:14px; font-family:monospace; font-size:12px; max-height:240px; overflow-y:auto; color:var(--text-muted); line-height:1.6;" id="upload-terminal-log">
+        </div>
+      </div>
+
+      <div class="modal-footer" id="modal-upload-footer">
+        <button class="btn-corp btn-corp-outline" id="modal-upload-close-btn" disabled>Aguarde...</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/engine.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
+</body>
+</html>

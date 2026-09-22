@@ -1,0 +1,16 @@
+# Ambientes e Dependências
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# 🔒 DADOS REAIS CONFIDENCIAIS (NUNCA SUBIR PARA O GITHUB/VERCEL)
+data_real/
+data_backup/
+*.xlsx
+*.xls
+*.csv
+
+# Arquivos de scratch temporários
+scratch_prompt*.txt
+user_prompt_*.txt

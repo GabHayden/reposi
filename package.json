@@ -1,0 +1,14 @@
+﻿{
+  "name": "sistema-dimensionamento",
+  "version": "1.0.0",
+  "description": "Sistema de Dimensionamento de Quadro para Varejo Alimentar Plurix",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "extract": "node scripts/extract_data.js",
+    "test": "node scripts/validar_regras_oficiais.js"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "operacionais": [
+    {
+      "setorHC": "OPERADOR DE CAIXA",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 3,
+      "totalHC": 3768.1,
+      "lojasCount": 148,
+      "mediaPorLoja": 25.46,
+      "pctDoQuadro": 28.4,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "AÇOUGUE / PEIXARIA",
+      "driverVolume": "AÇOUGUE",
+      "quadroMinimo": 6,
+      "totalHC": 1411,
+      "lojasCount": 148,
+      "mediaPorLoja": 9.53,
+      "pctDoQuadro": 10.6,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "PADARIA",
+      "driverVolume": "PADARIA",
+      "quadroMinimo": 5,
+      "totalHC": 1336.3,
+      "lojasCount": 148,
+      "mediaPorLoja": 9.03,
+      "pctDoQuadro": 10.1,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "P.A.S.",
+      "driverVolume": "P.A.S.",
+      "quadroMinimo": 5,
+      "totalHC": 968.5,
+      "lojasCount": 148,
+      "mediaPorLoja": 6.54,
+      "pctDoQuadro": 7.3,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "F.L.V",
+      "driverVolume": "F.L.V",
+      "quadroMinimo": 4,
+      "totalHC": 945,
+      "lojasCount": 148,
+      "mediaPorLoja": 6.39,
+      "pctDoQuadro": 7.1,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "EMPACOTADOR",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 0,
+      "totalHC": 720.9,
+      "lojasCount": 109,
+      "mediaPorLoja": 6.61,
+      "pctDoQuadro": 5.4,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "REPOSITOR",
+      "driverVolume": "MERCEARIA GERAL",
+      "quadroMinimo": 6,
+      "totalHC": 694.8,
+      "lojasCount": 76,
+      "mediaPorLoja": 9.14,
+      "pctDoQuadro": 5.2,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "ROTISSERIA",
+      "driverVolume": "ROTISSERIA",
+      "quadroMinimo": 0,
+      "totalHC": 530.5,
+      "lojasCount": 123,
+      "mediaPorLoja": 4.31,
+      "pctDoQuadro": 4,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "DEPÓSITO",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 4,
+      "totalHC": 525.1,
+      "lojasCount": 148,
+      "mediaPorLoja": 3.55,
+      "pctDoQuadro": 4,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "LIMPEZA",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 0,
+      "totalHC": 263.8,
+      "lojasCount": 95,
+      "mediaPorLoja": 2.78,
+      "pctDoQuadro": 2,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "GERÊNCIA DE LOJA",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 0,
+      "totalHC": 244.2,
+      "lojasCount": 123,
+      "mediaPorLoja": 1.99,
+      "pctDoQuadro": 1.8,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "E-COMMERCE",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 0,
+      "totalHC": 159.9,
+      "lojasCount": 74,
+      "mediaPorLoja": 2.16,
+      "pctDoQuadro": 1.2,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "ENCARREGADO DE LOJA",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 0,
+      "totalHC": 18.5,
+      "lojasCount": 13,
+      "mediaPorLoja": 1.42,
+      "pctDoQuadro": 0.1,
+      "dimensionavel": true
+    },
+    {
+      "setorHC": "FISCAL CAIXA",
+      "driverVolume": " TOTAL",
+      "quadroMinimo": 2,
+      "totalHC": 1.1,
+      "lojasCount": 1,
+      "mediaPorLoja": 1.08,
+      "pctDoQuadro": 0,
+      "dimensionavel": true
+    }
+  ],
+  "auditoria": [
+    {
+      "setorHC": "NÃO CONTA",
+      "driverVolume": null,
+      "quadroMinimo": 0,
+      "totalHC": 1679.9,
+      "lojasCount": 148,
+      "dimensionavel": false
+    },
+    {
+      "setorHC": "#N/D",
+      "driverVolume": null,
+      "quadroMinimo": 0,
+      "totalHC": 6.7,
+      "lojasCount": 8,
+      "dimensionavel": false
+    }
+  ],
+  "mapeamentoVolHc": {
+    "AÇOUGUE": "AÇOUGUE / PEIXARIA",
+    "PADARIA": "PADARIA",
+    "P.A.S.": "P.A.S.",
+    "F.L.V": "F.L.V",
+    "ROTISSERIA": "ROTISSERIA",
+    "MERCEARIA GERAL": "REPOSITOR",
+    " TOTAL": "OPERADOR DE CAIXA"
+  },
+  "setoresHcComDriverTotal": [
+    "OPERADOR DE CAIXA",
+    "DEPÓSITO",
+    "EMPACOTADOR",
+    "FISCAL CAIXA",
+    "LIMPEZA",
+    "GERÊNCIA DE LOJA",
+    "E-COMMERCE",
+    "ENCARREGADO DE LOJA"
+  ],
+  "quadroMinimoPorSetor": {
+    "OPERADOR DE CAIXA": 3,
+    "AÇOUGUE / PEIXARIA": 6,
+    "PADARIA": 5,
+    "P.A.S.": 5,
+    "F.L.V": 4,
+    "DEPÓSITO": 4,
+    "REPOSITOR": 6,
+    "FISCAL CAIXA": 2,
+    "ROTISSERIA": 0,
+    "EMPACOTADOR": 0,
+    "LIMPEZA": 0,
+    "GERÊNCIA DE LOJA": 0,
+    "E-COMMERCE": 0,
+    "ENCARREGADO DE LOJA": 0,
+    "NÃO CONTA": 0
+  }
+}
