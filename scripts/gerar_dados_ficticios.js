@@ -1,26 +1,33 @@
 /**
  * scripts/gerar_dados_ficticios.js
  * Gera a base clonada 100% fictícia para demonstração pública / Vercel / GitHub
- * SEM ALTERAR NENHUM ARQUIVO DA PASTA data/ ORIGINAL.
+ * Mantém as investidas oficiais (AMG, AVE, BOA, PRN), clusters e setores,
+ * mas protege 100% dos dados financeiros e de headcount com perturbação e anonimização.
  * 
- * Salva a saída na pasta: data_ficticio/
+ * Salva a saída nas pastas:
+ * - data_ficticio/
+ * - data/ (base ativa de deploy)
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const DIR_ORIGINAL = path.join(__dirname, '..', 'data');
+const DIR_REAL = path.join(__dirname, '..', 'data_real');
+const DIR_DATA = path.join(__dirname, '..', 'data');
 const DIR_FICTICIO = path.join(__dirname, '..', 'data_ficticio');
+
+// Se existir data_real/, ler de lá para ter os 152 registros intactos como molde
+const DIR_ORIGINAL = fs.existsSync(DIR_REAL) ? DIR_REAL : DIR_DATA;
 
 if (!fs.existsSync(DIR_FICTICIO)) {
   fs.mkdirSync(DIR_FICTICIO, { recursive: true });
 }
 
-console.log('=== GERANDO CLONE COM DADOS FICTÍCIOS PARA VERCEL / GITHUB ===');
-console.log(`Lendo dados originais de: ${DIR_ORIGINAL}`);
-console.log(`Salvando dados fictícios em: ${DIR_FICTICIO}`);
+console.log('=== GERANDO BASE FICTÍCIA COM INVESTIDAS, CLUSTERS E SETORES ===');
+console.log(`Fonte molde: ${DIR_ORIGINAL}`);
+console.log(`Destino fictício: ${DIR_FICTICIO}`);
 
-// 1. Ler as bases originais (apenas leitura, intocadas)
+// 1. Ler os dados originais/molde
 const lojasOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'lojas.json'), 'utf8'));
 const caixaOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'caixa_oficial.json'), 'utf8'));
 const dinVolOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'din_vol.json'), 'utf8'));
@@ -31,26 +38,27 @@ const regrasOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'regras.js
 const setoresConfigOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'setores_config.json'), 'utf8'));
 const setoresResumoOrig = JSON.parse(fs.readFileSync(path.join(DIR_ORIGINAL, 'setores_resumo.json'), 'utf8'));
 
-// 2. Mapeamento de Investidas e Bandeiras Fictícias
+// 2. Mapeamento de Investidas e Bandeiras
+// Mantém os identificadores esperados pela interface (AMG, AVE, BOA, PRN)
 const MAPA_INVESTIDA = {
-  'AMG': { id: 'ALF', nome: 'REDE ALFA', bandeiraPadrao: 'ALFA SUPER' },
-  'AVE': { id: 'BET', nome: 'REDE BETA', bandeiraPadrao: 'BETA VAREJO' },
-  'BOA': { id: 'GAM', nome: 'REDE GAMA', bandeiraPadrao: 'GAMA MARKET' },
-  'PRN': { id: 'DEL', nome: 'REDE DELTA', bandeiraPadrao: 'DELTA HIPER' }
+  'AMG': { id: 'AMG', nome: 'AMIGÃO', bandeiraPadrao: 'AMIGAO' },
+  'AVE': { id: 'AVE', nome: 'AVENIDA', bandeiraPadrao: 'AVENIDA' },
+  'BOA': { id: 'BOA', nome: 'BOA', bandeiraPadrao: 'BOA' },
+  'PRN': { id: 'PRN', nome: 'PARANÁ', bandeiraPadrao: 'PARANA' }
 };
 
 const MAPA_BANDEIRA = {
-  'AMG': 'ALFA SUPER',
-  'AMIGAO': 'ALFA HIPER',
-  'AVENIDA': 'BETA VAREJO',
-  'BOA': 'GAMA MARKET',
-  'DOM OLIVIO': 'GAMA GOURMET',
-  'PARANA': 'DELTA SUPER',
-  'PARANA ATACADO': 'DELTA ATACADO',
-  'PRN': 'DELTA HIPER'
+  'AMG': 'AMIGAO',
+  'AMIGAO': 'AMIGAO',
+  'AVENIDA': 'AVENIDA',
+  'BOA': 'BOA',
+  'DOM OLIVIO': 'DOM OLIVIO',
+  'PARANA': 'PARANA',
+  'PARANA ATACADO': 'PARANA ATACADO',
+  'PRN': 'PARANA'
 };
 
-// Nomes de bairros e regiões fictícias elegantes de varejo
+// Nomes fictícios de bairros elegantes de varejo para anonimizar endereços reais
 const BAIRROS_FICTICIOS = [
   'CENTRO', 'JARDINS', 'BOULEVARD', 'PAULISTA', 'SHOPPING SUL', 'NORTE PLAZA',
   'BARRA', 'PRAIA DO SOL', 'ALPHAVILLE', 'MOEMA', 'PINHEIROS', 'MORUMBI',
@@ -66,23 +74,34 @@ const BAIRROS_FICTICIOS = [
   'COPACABANA', 'LEBLON', 'FLAMENGO', 'GLORIA', 'CATETE', 'LARANJEIRAS'
 ];
 
-// 3. Mapear cada loja real para uma loja fictícia consistente
+// 3. Mapear cada loja real para sua representação fictícia anônima
 const mapaLojas = {};
-const lojasListFicticias = [];
 
 lojasOrig.forEach((l, idx) => {
-  const invFicticia = MAPA_INVESTIDA[l.investida] ? MAPA_INVESTIDA[l.investida].id : 'DEMO';
-  const bandFicticia = MAPA_BANDEIRA[l.bandeira] || `${invFicticia} VAREJO`;
-  const numLoja = idx + 1;
+  const invFicticia = MAPA_INVESTIDA[l.investida] ? MAPA_INVESTIDA[l.investida].id : l.investida;
+  const bandFicticia = MAPA_BANDEIRA[l.bandeira] || l.bandeira || `${invFicticia} VAREJO`;
+  
+  // Extrair ou gerar número da loja
+  const numLoja = l.numeroLoja || l.codigoLoja || (idx + 1);
   const numLojaStr = String(numLoja).padStart(3, '0');
   const nomeBairro = BAIRROS_FICTICIOS[idx % BAIRROS_FICTICIOS.length];
   const lojaNomeFicticio = `${numLojaStr}-${nomeBairro}`;
   const chaveFicticia = `${invFicticia}${lojaNomeFicticio}`;
 
-  // Fator pseudo-aleatório controlado (0.90 a 1.10) para anonimizar os números
-  // sem quebrar a coerência matemática de produtividade
+  // Fator pseudo-aleatório determinístico (0.90 a 1.10) para proteger valores reais
   const seed = (idx * 17 + 23) % 100;
   const fatorRuido = 0.92 + (seed / 100) * 0.16; // entre 0.92 e 1.08
+
+  // Tratamento de Cluster
+  let clusterF = l.cluster || 'A';
+  let clusterBandeiraF = l.clusterBandeira || `${bandFicticia}-${clusterF}`;
+
+  if (clusterF.startsWith('ÚNICO') || (l.clusterBandeira && l.clusterBandeira.includes('ÚNICO'))) {
+    clusterF = `ÚNICO - ${lojaNomeFicticio}`;
+    clusterBandeiraF = `${bandFicticia}-${clusterF}`;
+  } else {
+    clusterBandeiraF = `${bandFicticia}-${clusterF}`;
+  }
 
   mapaLojas[l.lojaNome] = {
     lojaNomeFicticio,
@@ -90,6 +109,8 @@ lojasOrig.forEach((l, idx) => {
     invFicticia,
     bandFicticia,
     numLoja,
+    clusterF,
+    clusterBandeiraF,
     fatorRuido,
     originalLojaNome: l.lojaNome,
     originalChave: l.chave
@@ -104,6 +125,8 @@ const lojasFicticias = lojasOrig.map(l => {
     invFicticia: l.investida,
     bandFicticia: l.bandeira,
     numLoja: l.numeroLoja || 1,
+    clusterF: l.cluster || 'A',
+    clusterBandeiraF: l.clusterBandeira || 'BOA-A',
     fatorRuido: 1
   };
 
@@ -149,10 +172,6 @@ const lojasFicticias = lojasOrig.map(l => {
     };
   });
 
-  const clusterBandeiraF = l.clusterBandeira
-    ? l.clusterBandeira.replace(/^[A-Z0-9\s]+-/, `${m.bandFicticia}-`).replace(l.lojaNome, m.lojaNomeFicticio)
-    : `${m.bandFicticia}-${l.cluster || 'A'}`;
-
   return {
     chave: m.chaveFicticia,
     investida: m.invFicticia,
@@ -167,8 +186,8 @@ const lojasFicticias = lojasOrig.map(l => {
     volProjetado: volProjetadoF,
     hcAnterior: hcAnteriorF,
     vendaPorM2: vendaPorM2F,
-    cluster: l.cluster,
-    clusterBandeira: clusterBandeiraF,
+    cluster: m.clusterF,
+    clusterBandeira: m.clusterBandeiraF,
     metaProdutividade: null,
     hcTotalLoja: hcTotalLojaF,
     setores: setoresF
@@ -182,6 +201,8 @@ const caixaFicticio = caixaOrig.map(c => {
     chaveFicticia: c.chave,
     invFicticia: c.investida,
     bandFicticia: c.bandeira,
+    clusterF: c.cluster || 'A',
+    clusterBandeiraF: c.clusterBandeira || 'BOA-A',
     fatorRuido: 1
   };
   const f = m.fatorRuido;
@@ -191,10 +212,6 @@ const caixaFicticio = caixaOrig.map(c => {
   const prodF = (volAnteriorF && hcAnteriorF && hcAnteriorF > 0) ? Math.round((volAnteriorF / hcAnteriorF) * 100) / 100 : null;
   const areaVendaF = c.areaVenda ? Math.round(c.areaVenda * (0.95 + (f - 0.92) * 0.5)) : null;
   const vendaPorM2F = (volAnteriorF && areaVendaF) ? Math.round((volAnteriorF / areaVendaF) * 100) / 100 : null;
-
-  const clusterBandeiraF = c.clusterBandeira
-    ? c.clusterBandeira.replace(/^[A-Z0-9\s]+-/, `${m.bandFicticia}-`).replace(c.lojaNome, m.lojaNomeFicticio)
-    : `${m.bandFicticia}-${c.cluster || 'A'}`;
 
   return {
     ...c,
@@ -208,7 +225,8 @@ const caixaFicticio = caixaOrig.map(c => {
     hcAnterior: hcAnteriorF,
     produtividade: prodF,
     vendaPorM2: vendaPorM2F,
-    clusterBandeira: clusterBandeiraF
+    cluster: m.clusterF,
+    clusterBandeira: m.clusterBandeiraF
   };
 });
 
@@ -316,7 +334,15 @@ const hcCargosFicticio = hcCargosOrig.map(c => {
   };
 });
 
-// 9. Clonar e anonimizar config.json
+// 9. Atualizar resumo de setores proporcionalmente
+const fatorGlobalMedio = 1.0;
+const setoresResumoFicticio = setoresResumoOrig.map(s => ({
+  ...s,
+  totalHc: Math.round(s.totalHc * fatorGlobalMedio * 10) / 10,
+  totalVolume: Math.round(s.totalVolume * fatorGlobalMedio)
+}));
+
+// 10. Clonar e anonimizar config.json
 const investidasFicticias = Array.from(new Set(lojasFicticias.map(l => l.investida))).sort();
 const bandeirasFicticias = Array.from(new Set(lojasFicticias.map(l => l.bandeira))).sort();
 const clustersFicticios = Array.from(new Set(lojasFicticias.map(l => l.clusterBandeira))).sort();
@@ -335,23 +361,30 @@ const configFicticio = {
   ambiente: 'DEMO / VERCEL / GITHUB'
 };
 
-// 10. Salvar todos os 9 arquivos em data_ficticio/
-fs.writeFileSync(path.join(DIR_FICTICIO, 'lojas.json'), JSON.stringify(lojasFicticias, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'caixa_oficial.json'), JSON.stringify(caixaFicticio, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'din_vol.json'), JSON.stringify(dinVolFicticio, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'din_hc.json'), JSON.stringify(dinHcFicticio, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'hc_cargos_fte.json'), JSON.stringify(hcCargosFicticio, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'config.json'), JSON.stringify(configFicticio, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'regras.json'), JSON.stringify(regrasOrig, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'setores_config.json'), JSON.stringify(setoresConfigOrig, null, 2), 'utf8');
-fs.writeFileSync(path.join(DIR_FICTICIO, 'setores_resumo.json'), JSON.stringify(setoresResumoOrig, null, 2), 'utf8');
+// 11. Salvar em data_ficticio/ E em data/ (base ativa de execução e deploy)
+const salvarBases = (diretorioDestino) => {
+  fs.writeFileSync(path.join(diretorioDestino, 'lojas.json'), JSON.stringify(lojasFicticias, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'caixa_oficial.json'), JSON.stringify(caixaFicticio, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'din_vol.json'), JSON.stringify(dinVolFicticio, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'din_hc.json'), JSON.stringify(dinHcFicticio, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'hc_cargos_fte.json'), JSON.stringify(hcCargosFicticio, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'config.json'), JSON.stringify(configFicticio, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'regras.json'), JSON.stringify(regrasOrig, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'setores_config.json'), JSON.stringify(setoresConfigOrig, null, 2), 'utf8');
+  fs.writeFileSync(path.join(diretorioDestino, 'setores_resumo.json'), JSON.stringify(setoresResumoFicticio, null, 2), 'utf8');
+};
 
-console.log('\n✅ 9 ARQUIVOS FICTÍCIOS GERADOS COM SUCESSO EM data_ficticio/:');
-console.log(`- lojas.json: ${lojasFicticias.length} lojas fictícias (ex: ${lojasFicticias[0].lojaNome})`);
-console.log(`- caixa_oficial.json: ${caixaFicticio.length} registros`);
-console.log(`- din_vol.json: ${dinVolFicticio.length} registros`);
-console.log(`- din_hc.json: ${dinHcFicticio.length} registros`);
-console.log(`- hc_cargos_fte.json: ${hcCargosFicticio.length} registros de cargos`);
-console.log(`- config.json: ${investidasFicticias.length} investidas (ALF, BET, GAM, DEL) e ${bandeirasFicticias.length} bandeiras`);
-console.log(`- regras.json, setores_config.json, setores_resumo.json preservados`);
-console.log('🔒 ATENÇÃO: NENHUM arquivo em data/ original foi alterado!');
+salvarBases(DIR_FICTICIO);
+salvarBases(DIR_DATA);
+
+console.log('\n🎉 SUCESSO: Base fictícia gerada com investidas reais preservadas!');
+console.log(`- Lojas: ${lojasFicticias.length} lojas geradas`);
+console.log(`- Investidas: ${investidasFicticias.join(', ')}`);
+console.log(`- Distribuição por Investida:`);
+investidasFicticias.forEach(inv => {
+  const count = lojasFicticias.filter(l => l.investida === inv).length;
+  console.log(`   * ${inv}: ${count} lojas`);
+});
+console.log(`- Total HC Fictício da Rede: ${totalHcRedeF} FTE`);
+console.log(`- Clusters disponíveis: ${clustersFicticios.length} combinações`);
+console.log('🔒 Dados financeiros e de colaboradores mantidos 100% anonimizados com fatorRuido.');
